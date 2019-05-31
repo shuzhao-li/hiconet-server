@@ -1,0 +1,16 @@
+{% extends "dashboard/_base.html" %}
+
+{% block pagetitle %}Job Status{% endblock %}
+
+{% block pageheader %}View Processing Job Status{% endblock %}
+
+{% block pagedescription %}View your data processing job status below.  You can refresh to get the latest status.{% endblock %}
+
+{% block content %}
+<p>Job ID: {{ task_id }}</p>
+<p>Job Status: {{ state }} - {{ message }}</p>
+{% if state == "SUCCESS" %}
+<p><a href="{% url "result" task_id=task_id %}">View Results</a></p>
+
+{% endif %}
+{% endblock %}

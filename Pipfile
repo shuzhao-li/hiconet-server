@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+celery = "*"
+dj-database-url = "*"
+whitenoise = "*"
+django-celery-results = "*"
+"psycopg2" = "*"
+hiconet = {editable = true, ref = "master", git = "https://github.com/shuzhao-li/hiconet.git"}
+gunicorn = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"

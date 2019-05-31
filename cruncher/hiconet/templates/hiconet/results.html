@@ -1,0 +1,287 @@
+{% extends "dashboard/results.html" %}
+
+{% block extrahead %}
+
+  <style type="text/css">
+
+
+
+    div.networkvisual { 
+            min-height: 300px; min-width: 300px;
+            }
+    div.svg2 { margin: 0; min-height: 300px; min-width: 300px; overflow: auto !important;}
+
+
+
+  </style>
+
+  <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.5.4/cytoscape.min.js" charset="utf-8"></script>
+
+{% endblock %}
+
+{% block results %}
+
+
+  <div class="container">
+    <!-- Masthead ================================================== -->
+  <div class="container-fluid">
+  <div class="row">
+    <div class="col-md-9">
+        <div class="panel panel-default" >
+        <div class="panel-body">
+
+                <!-- showing network graph -->
+                <div id="networkvisual" class="networkvisual" > 
+
+                </div>
+
+<div>
+    <h2>Testing JSON</h2>
+        {{ result.result_data|safe }};
+</div>
+
+
+        </div>
+        </div>
+
+        <div class="panel panel-info" >
+                <div class="panel-heading">Community members</div>
+                <div class="panel-body">
+                <!-- showing community list -->
+                <div id="community_members"  > 
+
+                </div>
+                </div>
+        </div>
+
+
+    </div>
+
+    <div class="col-md-3">
+        <div class="panel panel-info" >
+            <div class="panel-heading">Communities (Nodes)</div>
+                <!-- selecting community member -->
+                <div id="community_list" class="table-responsive" >
+
+                </div>
+        </div>
+    </div>
+  </div>
+
+  </div>
+
+  <div class="panel-footer">
+  This project was in part supported by NIH grant UH2AI132345.
+  Development extended from Li et al. (2017) Cell, 169: 862, Gardinassi et al (2018) Redox Biology. 17:158-170.     
+  </div>
+
+  </div>
+
+{% endblock %}
+
+
+
+{% block scripts %}
+
+
+<script type="text/javascript" charset="utf-8">
+  // Result network definition
+  var data = {{ result.result_data|safe }};
+
+  window.cy_elements = "global";
+  window.list_communities = "global";
+  window.community_data = "global";
+  window.selectedCommunity = "global";
+  
+  window.cy_elements = data["elements"];
+    window.community_data = data["community_data"];
+    window.list_communities = data["list_communities"];
+    var sel = data["list_communities"][0];
+    var selectedCommunity = data["community_data"][sel];
+
+    // have to have data in first:
+    addSideTable();
+
+    addCyNetwork(window.cy_elements);
+
+    plotMemberChart(selectedCommunity, sel);
+  
+  //
+  var addCyNetwork = function(cy_elements){
+  
+      var defaultColor = '#666';
+      
+  
+      var cy = cytoscape({
+  
+      container: document.getElementById('networkvisual'), // container to render in
+  
+      elements: cy_elements,
+  
+      style: [ // the stylesheet for the graph
+      {
+          selector: 'node',
+          style: {
+          'background-color': defaultColor,
+          'label': 'data(id)'
+          }
+      },
+  
+      {
+          selector: 'edge',
+          style: {
+          'width': 3,
+          'line-color': '#ccc',
+          'target-arrow-color': '#ccc',
+          'target-arrow-shape': 'triangle'
+          }
+      }
+      ],
+  
+      layout: {
+      name: 'random',
+  
+      }
+  
+      });
+  
+      var lastNodeClicked = cy.getElementById(window.list_communities[0]);
+      cy.on('click', 'node', function(evt){
+          lastNodeClicked.style({ 'background-color': defaultColor });
+          var node = evt.target;
+          console.log( 'clicked ' + node.id() );
+  
+          // but need reset ??
+          node.style({ 'background-color': 'blue' });
+  
+          clickNode(node.id());
+          lastNodeClicked = node;
+      });
+  
+  };
+  
+  
+  var clickNode = function(x){
+      // red color selected node in the right-side table
+      $.each(window.list_communities, function(i, c) {
+          document.getElementById(c).style.color = "black";
+      });
+      document.getElementById(x).style.color = "red";
+  };
+  
+  
+  var addSideTable = function (){
+      var html = '<table class="table table-striped" > ';
+      $.each(window.list_communities, function(i, c) {
+          html += '<tr><td id="' + c + '" onclick="clickCommunity(this)">' + c + '</td></tr>';
+      });
+      html += '</table>';
+      $("#community_list").append(html);
+  };
+  
+  
+  var clickCommunity = function(c){
+      clickNode(c.id);
+      plotMemberChart(window.community_data[c.id], c.id);
+  };
+  
+  
+  // Bottom heatmap to show members of selected community
+  var plotMemberChart = function(dataSeries, title){
+  
+      // Build data indices
+      var myGroups = [];
+      var myVars = [];
+      var mydata = [ ];
+  
+      for (var ii in dataSeries[0].data) {
+          myGroups.push(ii)
+      }
+  
+      for (var jj in dataSeries) {
+          myVars.push(dataSeries[jj].name)
+      }
+  
+      for (var ii in myGroups) {
+          for (var jj in myVars) {
+              mydata.push(
+                  {group: myGroups[ii],
+                  variable: myVars[jj],
+                  value: dataSeries[jj].data[ii]}
+              )
+          }
+      };
+  
+      //console.log(myGroups);
+      //console.log(myVars);
+  
+      // set the dimensions and margins of the graph. Will compute according to data -
+      var margin = {top: 30, right: 180, bottom: 30, left: 30},
+      width = 550 - margin.left - margin.right,
+      height = myVars.length*12 - margin.top - margin.bottom;
+  
+      // reset the space
+      d3.select("#community_members").selectAll("*").remove();
+  
+      // append the svg object to the body of the page
+      var svg = d3.select("#community_members")
+      //.remove()
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
+  
+  
+      // Build scales and axis:
+      var x = d3.scaleBand()
+      .range([ 0, width ])
+      .domain(myGroups)
+      .padding(0.01);
+      svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x))
+  
+      var y = d3.scaleBand()
+      .range([ height, 0 ])
+      .domain(myVars)
+      .padding(0.01);
+      svg.append("g")
+      .attr("transform", "translate( " + width + ", 0 )")
+      .call(d3.axisRight(y));
+  
+      // Build color scale
+      var myColor = d3.scaleLinear()
+      .range(["white", "#69b3a2"])
+      .domain([-1,1])
+  
+      // Draw 
+      svg.selectAll()
+          .data(mydata, function(d) {return d.group+':'+d.variable;})
+          .enter()
+          .append("rect")
+          .attr("x", function(d) { return x(d.group) })
+          .attr("y", function(d) { return y(d.variable) })
+          .attr("width", x.bandwidth() )
+          .attr("height", y.bandwidth() )
+          .style("fill", function(d) { return myColor(d.value)} );
+  
+      // Add title
+      svg.append("text")
+          .attr("x", 0)
+          .attr("y", -10)
+          .attr("text-anchor", "left")
+          .style("font-size", "16px")
+          .text(title);
+  
+  };
+  
+  
+  
+  </script>
+  
+
+{% endblock %}

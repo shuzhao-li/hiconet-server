@@ -1,0 +1,41 @@
+<html>
+    <head>
+        {% spaceless %}
+        <title>
+            {% block title %}
+                {% block pagetitle %}{% endblock %} | HiCoNet
+            {% endblock %}
+        </title>
+        {% endspaceless %}
+        {% block extrahead %}{% endblock %}
+
+        <link rel="stylesheet" type="text/css" href="/static/dashboard/bootstrap.min.css">
+        
+
+    </head>
+
+<!--Will move the body style elsewhere. Tmp hacking-->
+    <body style="margin:4; padding:4"> 
+
+                <nav class="navbar navbar-expand-lg  navbar-fixed-top" style="background-color: black">
+                        <ul class="navbar-nav">
+                                <li class="nav-item active">
+                                  <a class="nav-link" href="#">HiCoNet <span class="sr-only">(current)</span></a>
+                                </li>
+
+                                <li class="nav-item">
+                                  <a class="nav-link" href="#">Help</a>
+                                </li>
+                              </ul>
+                </nav>
+        
+
+                
+
+        <h1>{% block pageheader %}{% endblock %}</h1>
+        <div>{% block pagedescription %}{% endblock %}</div>
+        <div>{% block content %}{% endblock %}</div>
+        <div>{% block footer %}{% endblock %}</div>
+        {% block scripts %}{% endblock %}
+    </body>
+</html>

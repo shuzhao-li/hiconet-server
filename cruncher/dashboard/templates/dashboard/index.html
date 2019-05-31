@@ -1,0 +1,15 @@
+{% extends "dashboard/_base.html" %}
+
+{% block pagetitle %}Select Analysis{% endblock %}
+
+{% block pageheader %}Select Analysis Type{% endblock %}
+
+{% block pagedescription %}Select the type of analysis you want to perform{% endblock %}
+
+{% block content %}
+<ul>
+    {% for engine in engines %}
+    <li><a href="{% url 'submit' analysis=engine %}">{{ engine }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "dashboard/_base.html" %}
+
+{% block pagetitle %}Results{% endblock %}
+
+{% block extrahead %}{% endblock %}
+
+{% block pageheader %}HiCoNet Result: {{ client_request.project_name }}{% endblock %}
+
+{% block pagedescription %}{% endblock %}
+
+{% block content %}
+<p>Submitted: {{ client_request.modified }}</p>
+{% block results %}Results{% endblock %}
+{% endblock %}
+
+{% block scripts %}{% endblock %}
