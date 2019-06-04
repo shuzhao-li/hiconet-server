@@ -133,7 +133,7 @@
         "hiconet": {
             "editable": true,
             "git": "https://github.com/shuzhao-li/hiconet.git",
-            "ref": "0ab494c581cb2f08b67b585e1b602f2f4d109174"
+            "ref": "master"
         },
         "joblib": {
             "hashes": [

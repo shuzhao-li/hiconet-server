@@ -21,6 +21,8 @@ def process_data(request_id):
     log.info(
         'Loading HiCoNet engine for project "{}"'.format(
             project.get('project')))
+    
+    # data analysis going into engine
     engine = webHiCoNet(project)
     log.info('Running HiCoNet processing')
     start = time.time()
@@ -29,11 +31,10 @@ def process_data(request_id):
     log.info('HiCoNet processing complete [elapsed={}]'.format(elapsed))
 
     # Build result
-    js_snippet = make_js_from_network(engine.combined_network[:20])
     result = ClientRequestResult(
         request=request,
         processing_seconds=elapsed,
-        result_data=js_snippet)
+        result_data=engine.export_json())
     result.save()
 
     return result.pk

@@ -37,12 +37,6 @@
 
                 </div>
 
-<div>
-    <h2>Testing JSON</h2>
-        {{ result.result_data|safe }};
-</div>
-
-
         </div>
         </div>
 
@@ -87,27 +81,23 @@
 
 
 <script type="text/javascript" charset="utf-8">
-  // Result network definition
-  var data = {{ result.result_data|safe }};
 
-  window.cy_elements = "global";
-  window.list_communities = "global";
-  window.community_data = "global";
-  window.selectedCommunity = "global";
-  
-  window.cy_elements = data["elements"];
-    window.community_data = data["community_data"];
-    window.list_communities = data["list_communities"];
-    var sel = data["list_communities"][0];
-    var selectedCommunity = data["community_data"][sel];
+window.cy_elements = "global";
+window.list_communities = "global";
+window.community_data = "global";
+window.selectedCommunity = "global";
 
-    // have to have data in first:
-    addSideTable();
+// Result data from hiconet run
+var inputData = {{ result.result_data|safe }};
 
-    addCyNetwork(window.cy_elements);
+window.cy_elements = inputData["elements"];
+window.community_data = inputData["community_data"];
+window.list_communities = inputData["list_communities"];
 
-    plotMemberChart(selectedCommunity, sel);
-  
+var sel = window.list_communities[0];
+var selectedCommunity = window.community_data[sel];
+
+
   //
   var addCyNetwork = function(cy_elements){
   
@@ -280,6 +270,12 @@
   };
   
   
+  addSideTable();
+
+  addCyNetwork(window.cy_elements);
+
+  plotMemberChart(selectedCommunity, sel);
+
   
   </script>
   
