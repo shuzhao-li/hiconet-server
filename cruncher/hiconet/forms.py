@@ -33,9 +33,13 @@ class ClientRequestForm(BaseForm):
         help_text='Data type 2, observation annotations file')
 
     class Meta:
+        #
+        # rendering can be done using the widgets below
+        #
         model = ClientRequest
         fields = [
             'project_name',
+            'email',
             
             'analysis_type',
             'transcriptomics_name',
@@ -47,10 +51,10 @@ class ClientRequestForm(BaseForm):
             'metabolomics_data',
             'metabolomics_feature_annotations',
             'metabolomics_observation_annotations',
-
-            'email',
+            
         ]
         widgets = {
+
             'analysis_type': forms.HiddenInput(),
             'raw_data': forms.HiddenInput(),
         }

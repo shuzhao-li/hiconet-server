@@ -24,36 +24,88 @@
                     <div class="panel-body">
 
                                 <p>
-                                    Required for each data type is a DataMatrix (tab-dilimited text file), 
-                                    optional files FeatureAnnotation and ObservationAnnotation.
+                                    Required for each data type is a DataMatrix (tab-dilimited text file), feature as rows and samples (observations) as columns.
+                                    Sample IDs need to be pre-matched in the submitted files.
+                                    Feature annotation and Observation annotation are optional.
                                 </p>
 
                             <form enctype="multipart/form-data" action="" method="post">
                                 {% csrf_token %}
                                 {% block formfields %}
-                                <table  style="background-color: azure; padding: 16px">
-                                {{ form.as_table }}
-                                </table>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                            <div class="form-group"><label>Project name: </label>
+                                    {{ form.project_name }}</div></div>
+                                    <div class="col-sm-6">
+                                            <div class="form-group"><label>User email: </label>
+                                    {{ form.email }}</div></div>
+                                    <input type="hidden" name="analysis_type" value="hiconet" id="id_analysis_type">
+                                </div>
+
+                                <div class="row">
+                                    
+                                    <div class="col-sm-6"><div class="form-group">
+                                        <div class="card  border-primary">
+                                            <div class="card-body text-primary">
+                                            <h5 class="card-title">Data Type 1</h5>
+                                            
+                                            <p><label for="id_transcriptomics_name">Type 1 label:</label> <input type="text" name="transcriptomics_name" required id="id_transcriptomics_name"></p>
+                                            <p><label for="id_transcriptomics_data">Data matrix file:</label> <input type="file" name="transcriptomics_data" required id="id_transcriptomics_data"></p>
+                                            <p><label for="id_transcriptomics_feature_annotations">Feature annotations:</label> <input type="file" name="transcriptomics_feature_annotations" id="id_transcriptomics_feature_annotations"></p>
+                                            <p><label for="id_transcriptomics_observation_annotations">Observation annotations:</label> <input type="file" name="transcriptomics_observation_annotations" id="id_transcriptomics_observation_annotations"></p>
+
+                                            
+                                            </div>
+                                        </div>
+                                    </div></div>
+
+                                    <div class="col-sm-6"><div class="form-group">
+                                        <div class="card border-success">
+                                            <div class="card-body  text-success">
+                                            <h5 class="card-title">Data Type 2</h5>
+
+                                            <p><label for="id_metabolomics_name">Type 2 label:</label> <input type="text" name="metabolomics_name" required id="id_metabolomics_name"></p>
+                                            <p><label for="id_metabolomics_data">Data matrix file:</label> <input type="file" name="metabolomics_data" required id="id_metabolomics_data"> </p>
+                                            <p><label for="id_metabolomics_feature_annotations">Feature annotations:</label> <input type="file" name="metabolomics_feature_annotations" id="id_metabolomics_feature_annotations"></p>
+                                            <p><label for="id_metabolomics_observation_annotations">Observation annotations:</label> <input type="file" name="metabolomics_observation_annotations" id="id_metabolomics_observation_annotations"></p>
+                                            
+                                            </div>
+                                        </div>
+                                    </div></div>
+                                    
+                                </div>
+
                                 {% endblock %}
-                                <button type="submit">Submit</button>
+                                <div class="row">
+                                        <button type="submit">Submit</button>
+                                </div>
+
                             </form>
-        
+
                     </div>
                     </div>
                 </div>
                 <div class="col-md-3" style="padding-top: 60px">
-                    <p> HiCoNet is designed for integration of multiple data types collected from a common group of subjects.
+                    <h5>The algorithm</h5>
+                    <!--- to add img max-width -->
+                    <img src="/static/dashboard/hcn.png" class="img-fluid" alt="HiCoNet illustration figure">
+
+                </div>             
+        </div>
+    {% endblock %}
+
+        <div class="row">
+            <h5>Rationale</h5>
+                <p> HiCoNet is designed for integration of multiple data types collected from a common group of subjects.
                         Each data type is regarded as a "society".
                         HiCoNet detects "communities" within "society", then tests the association between communities across data types. 
                         This "hierarchical community network" thus provides a reasonable model of the organizational structure of measured biology.
-                    </p>
-                </div>             
+                        More at - <a class="nav-link" href="https://github.com/shuzhao-li/hiconet">HiCoNet GitHub page.</a></p>
+                    
         </div>
             
         <div class="row">
-                    <div class="panel panel-default">
-                        <div class="panel-heading"><h4>Terminology</h4></div>
-                        <div class="panel-body" >
+                <h5>Terminology</h5>
                             <li>
                             DataMatrix: a data matrix of [continuous] values that represent a biological state or concentration, of the same data type.
                             E.g. transcriptomics (array intensity or transcript counts), metabolomics (peak intensity/area) or microbial OTU counts.
@@ -67,16 +119,11 @@
                                 FeatureAnnotation: meta data on features. 
                                 This can be as simple as gene annotation, which can even be optional. But a feature may carry a defition of multiple parameters. E.g. a metabolite feaure may have m/z, retention time and collision cross section, and these parameters may be used for certain algorithms.
                             </li>                
-                           
-                        </div>
 
-                </div>
         </div>
-</div>
         
 
 
-{% endblock %}
 
 <hr>
 <p>
