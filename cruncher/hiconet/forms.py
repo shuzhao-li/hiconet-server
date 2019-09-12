@@ -10,7 +10,14 @@ class ClientRequestForm(BaseForm):
     # and show up as its own box in UI. 
     # Thus more than two data types will be possible and UI can be extended dynamically.
     #
+    # This is rather overwritten in HTML. see _build_project_definition
+
+    datatype_choices = [ 'transcriptomics', 'metabolomics', 'cells', 'cytokines', 'other']
+
     transcriptomics_name = forms.CharField()
+
+    datatype_1 = forms.CharField() #label="check type 1", widget=forms.Select(choices=datatype_choices) )
+
     transcriptomics_data = forms.FileField(
         help_text='Data type 1, data matrix file')
     transcriptomics_feature_annotations = forms.FileField(
@@ -23,6 +30,9 @@ class ClientRequestForm(BaseForm):
 
     # terms transcriptomics and metabolomics will be replaced to generic.
     metabolomics_name = forms.CharField()
+
+    datatype_2 = forms.CharField() # widget=forms.Select(choices=datatype_choices) )
+
     metabolomics_data = forms.FileField(
         help_text='Data type 2, data matrix file')
     metabolomics_feature_annotations = forms.FileField(
@@ -40,14 +50,19 @@ class ClientRequestForm(BaseForm):
         fields = [
             'project_name',
             'email',
-            
             'analysis_type',
+            #
+            # The naming here, transcriptomics and metabolomics, is from legacy code, not fixed to these data types.
+            # To be updated later.
+            #
             'transcriptomics_name',
+            'datatype_1',
             'transcriptomics_data',
             'transcriptomics_feature_annotations',
             'transcriptomics_observation_annotations',
             
             'metabolomics_name',
+            'datatype_2',
             'metabolomics_data',
             'metabolomics_feature_annotations',
             'metabolomics_observation_annotations',
@@ -88,7 +103,9 @@ class ClientRequestForm(BaseForm):
             'transcriptomics_observation_annotations')
         transcriptomics_society = {
             'name': data.get('transcriptomics_name'),
-            'datatype': 'transcriptomics',
+            #'datatype': 'transcriptomics',
+            'datatype': data.get('datatype_1'),
+
             'file_data_matrix': self._read_csv_data(
                 data.get('transcriptomics_data')),
             'file_feature_annotation': (
@@ -108,7 +125,9 @@ class ClientRequestForm(BaseForm):
             'metabolomics_observation_annotations')
         metabolomics_society = {
             'name': data.get('metabolomics_name'),
-            'datatype': 'metabolomics',
+            #'datatype': 'metabolomics',
+            'datatype': data.get('datatype_2'),
+
             'file_data_matrix': self._read_csv_data(
                 data.get('metabolomics_data')),
             'file_feature_annotation': (
